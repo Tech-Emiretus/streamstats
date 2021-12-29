@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Exception;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
@@ -19,6 +20,22 @@ class TwitchApiService
      * @var string
      */
     public const ENDPOINT = 'https://api.twitch.tv/helix';
+
+    /**
+     * Minimum number of records to be fetched per page.
+     *
+     * @static
+     * @var int
+     */
+    public const MIN_PER_PAGE = 20;
+
+    /**
+     * Maximum number of records to be fetched per page.
+     *
+     * @static
+     * @var int
+     */
+    public const MAX_PER_PAGE = 100;
 
     /**
      * Twitch App client ID.
@@ -56,7 +73,6 @@ class TwitchApiService
      * Get the authenticated user's details from twitch.
      *
      * @return null|stdClass
-     * @throws InvalidArgumentException
      */
     public function getUser(): ?stdClass
     {
@@ -70,6 +86,63 @@ class TwitchApiService
         $results = json_decode($response->body());
 
         return collect($results->data)->first();
+    }
+
+    /**
+     * Get the current streams from twitch sorted by descending order of viewer count.
+     *
+     * @param int $per_page
+     * @param null|string $after
+     * @return null|stdClass
+     */
+    public function getStreams(int $per_page = 20, ?string $after = null): ?stdClass
+    {
+        $params = [
+            'first' => static::getPerPage($per_page),
+        ];
+
+        if (!empty($after)) {
+            $params['after'] = $after;
+        }
+
+        $response = $this->fetch('get', static::ENDPOINT . '/streams', $params);
+
+        if ($response->successful() === false) {
+            Log::error('Get streams failed: ' . $response->body(), 'twitch');
+            return null;
+        }
+
+        return json_decode($response->body());
+    }
+
+    /**
+     * Get tag details from twitch for the specified tag ids.
+     *
+     * @param array $tag_ids
+     * @return null|Collection
+     * @throws InvalidArgumentException
+     */
+    public function getTags(array $tag_ids): ?Collection
+    {
+        if (empty($tag_ids)) {
+            throw new InvalidArgumentException('Specified tag ids array cannot be empty.');
+        }
+
+        $params = [];
+
+        foreach ($tag_ids as $tag_id) {
+            $params['tag_id'] = $tag_id;
+        }
+
+        $response = $this->fetch('get', static::ENDPOINT . '/tags/streams', $params);
+
+        if ($response->successful() === false) {
+            Log::error('Get tags failed: ' . $response->body(), 'twitch');
+            return null;
+        }
+
+        $result = json_decode($response->body());
+        return collect($result->data);
     }
 
     /**
@@ -92,5 +165,19 @@ class TwitchApiService
             'post' => $httpClient->post($url, $body),
             default => throw new InvalidArgumentException("The specified http method ({$method}) is invalid.")
         };
+    }
+
+    /**
+     * Gets the valid per page value to use.
+     * Uses the min value when per page is below accepted value.
+     * Uses the max value when per page is above accepted value.
+     *
+     * @static
+     * @param int $per_page
+     * @return int
+     */
+    protected static function getPerPage(int $per_page): int
+    {
+        return max(static::MIN_PER_PAGE, min(static::MAX_PER_PAGE, $per_page));
     }
 }

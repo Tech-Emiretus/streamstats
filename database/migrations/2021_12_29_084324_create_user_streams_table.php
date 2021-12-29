@@ -15,11 +15,12 @@ class CreateUserStreamsTable extends Migration
     {
         Schema::create('user_streams', function (Blueprint $table) {
             $table->id();
-            $table->string('twitch_id');
+            $table->string('twitch_id')->unique();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('broadcaster_id')->constrained('users');
             $table->foreignId('game_id')->constrained('games');
             $table->string('title');
+            $table->char('language', 10)->nullable();
             $table->integer('viewer_count');
             $table->string('thumbnail')->nullable();
             $table->boolean('is_mature')->default(false);

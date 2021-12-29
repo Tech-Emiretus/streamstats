@@ -20,13 +20,23 @@ class User extends Authenticatable
 
     public static function firstOrCreateFromTwitch($twitch_user): self
     {
-        return User::firstOrCreate([
+        return static::firstOrCreate([
             'twitch_id' => $twitch_user->id,
         ], [
             'username' => $twitch_user->login,
             'name' => $twitch_user->display_name,
             'email' => $twitch_user->email,
             'profile_image' => $twitch_user->profile_image_url,
+        ]);
+    }
+
+    public static function getBroadcasterFromStream($stream): self
+    {
+        return static::firstOrCreate([
+            'twitch_id' => $stream->user_id,
+        ], [
+            'username' => $stream->user_login,
+            'name' => $stream->user_name,
         ]);
     }
 }

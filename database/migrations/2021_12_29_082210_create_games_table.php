@@ -15,7 +15,7 @@ class CreateGamesTable extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->id();
-            $table->string('twitch_id');
+            $table->string('twitch_id')->unique();
             $table->string('name');
             $table->string('art_image')->nullable();
             $table->timestamps();

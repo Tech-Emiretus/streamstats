@@ -15,7 +15,7 @@ class CreateTagsTable extends Migration
     {
         Schema::create('tags', function (Blueprint $table) {
             $table->id();
-            $table->string('twitch_id');
+            $table->string('twitch_id')->unique();
             $table->string('name');
             $table->text('description')->nullable();
             $table->boolean('is_auto')->default(false);
