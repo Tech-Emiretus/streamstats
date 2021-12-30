@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\StreamsHelper;
 use App\Models\Game;
 use App\Models\Tag;
 use App\Models\TopStream;
@@ -52,100 +53,26 @@ class RefreshTopStreamsCommand extends Command
         }
 
         $twitch = new TwitchApiService(Config::get('twitch.client_id'), $access_token);
-        $streams = $this->fetchStreams($twitch);
-        $processed_streams = $this->getProcessedStreams($streams->shuffle(), $twitch);
 
+        // Fetch Streams
+        $this->comment(PHP_EOL . 'Start fetching streams.');
+        $streams = StreamsHelper::fetchStreams($twitch, 1000);
+        $this->info('Done fetching ' . $streams->count() . ' streams.');
+
+        // Process Streams
+        $this->comment(PHP_EOL . 'Start processing streams.');
+        $processed_streams = StreamsHelper::getProcessedStreams($twitch, $streams);
+        $this->info('Done processing streams.');
+
+        // Save Streams
+        $this->comment(PHP_EOL . 'Start saving processed streams.');
         $this->saveProcessedStreams($processed_streams);
+        $this->info('Done saving processed streams.');
 
         $duration = $start->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE);
         $this->info(PHP_EOL . 'Done. Top Streams have been refreshed. Time: ' . $duration);
 
         return Command::SUCCESS;
-    }
-
-    /**
-     * Fetches the top 1000 streams from twitch. Some pages might not have full 100
-     * live streams so we need to check that.
-     *
-     * @param TwitchApiService $twitch
-     * @return Collection
-     * @throws InvalidArgumentException
-     * @throws Exception
-     */
-    protected function fetchStreams(TwitchApiService $twitch): Collection
-    {
-        $top_streams = collect([]);
-        $next_page_cursor = null;
-        $page = 1;
-
-        while ($top_streams->count() < 1000) {
-            $this->comment('Fetching streams from page ' . $page . '. Currently at: ' . $top_streams->count() . ' streams.');
-
-            $retries = 3;
-            $streams = null;
-
-            while ($retries > 0) {
-                $streams = $twitch->getStreams(100, $next_page_cursor);
-
-                if (!is_null($streams)) {
-                    break;
-                }
-
-                $this->logError('Failed to fetch streams from twitch. Retrying');
-                $retries--;
-            }
-
-            if (is_null($streams)) {
-                throw new Exception('Something Unexpected Happened. Please check twitch configurations.');
-            }
-
-            collect($streams->data)->each(function ($stream) use ($top_streams) {
-                if ($stream->type === 'live') {
-                    $top_streams->push($stream);
-                }
-            });
-
-            if ($streams->pagination) {
-                $next_page_cursor = $streams->pagination->cursor;
-            }
-
-            $this->info('Completed fetching streams from page ' . $page . '. Currently at: ' . $top_streams->count() . ' streams.');
-            $page++;
-        }
-
-        return $top_streams->take(1000);
-    }
-
-    /**
-     * Get processed streams which are in the structure of our system architecture.
-     *
-     * @param Collection $streams
-     * @return Collection
-     */
-    protected function getProcessedStreams(Collection $streams, TwitchApiService $twitch): Collection
-    {
-        $this->comment(PHP_EOL . 'Start processing streams.');
-
-        $processed_streams = collect([]);
-
-        $streams->each(function ($stream) use ($processed_streams, $twitch) {
-            $processed_streams->push([
-                'twitch_id' => $stream->id,
-                'title' => $stream->title,
-                'viewer_count' => $stream->viewer_count,
-                'thumbnail' => $stream->thumbnail_url,
-                'is_mature' => $stream->is_mature,
-                'language' => $stream->language,
-                'started_at' => Carbon::parse($stream->started_at),
-                'broadcaster_id' => User::getBroadcasterFromStream($stream)->id,
-                'game_id' => Game::getGameFromStream($stream)->id,
-                'tags' => Tag::getTagsFromStream($stream, $twitch),
-            ]);
-        });
-
-        $this->info('Done processing streams.');
-
-        return $processed_streams;
     }
 
     /**
@@ -159,16 +86,12 @@ class RefreshTopStreamsCommand extends Command
      */
     protected function saveProcessedStreams(Collection $streams): void
     {
-        $this->comment(PHP_EOL . 'Start saving processed streams.');
-
         $streams->each(function ($stream, $key) {
             DB::transaction(function () use ($stream, $key) {
                 $top_stream = TopStream::updateOrCreate(['id' => $key + 1], Arr::except((array) $stream, 'tags'));
                 $top_stream->tags()->sync($stream['tags']);
             });
         });
-
-        $this->info('Done saving processed streams.');
     }
 
     /**
