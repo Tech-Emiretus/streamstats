@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Game extends Model
 {
@@ -17,6 +18,11 @@ class Game extends Model
     protected $guarded = [
         'id'
     ];
+
+    public function topStreams(): HasMany
+    {
+        return $this->hasMany(TopStream::class);
+    }
 
     public static function getGameFromStream($stream): self
     {

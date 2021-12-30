@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GamesController;
+use App\Http\Controllers\StreamStatsController;
 use App\Http\Controllers\UserStreamsController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +24,15 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/logout', [AuthController::class, 'logout']);
     Route::get('/refresh-streams', [UserStreamsController::class, 'refreshStreams']);
+
+    // Game stats
+    Route::get('/games/by-stream-count', [GamesController::class, 'getByStreamCount']);
+    Route::get('/games/by-viewer-count', [GamesController::class, 'getByViewerCount']);
+
+    // Stream stats
+    Route::get('streams/top-streams', [StreamStatsController::class, 'getTopStreams']);
+    Route::get('streams/followed-by-user', [StreamStatsController::class, 'getStreamsFollowedByUser']);
+    Route::get('streams/get-min-viewer-count-needed', [StreamStatsController::class, 'getViewerCountNeededForLowest']);
 });
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
