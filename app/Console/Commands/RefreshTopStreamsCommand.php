@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Services\TwitchApiService;
 use App\Services\TwitchAuthService;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
@@ -41,10 +42,12 @@ class RefreshTopStreamsCommand extends Command
      */
     public function handle(TwitchAuthService $auth_service): int
     {
+        $start = Carbon::now();
+
         $access_token = $auth_service->getSystemAccessToken();
 
         if (is_null($access_token)) {
-            $this->logError('Could not fetch access token from twitch.');
+            $this->logError('Could not fetch access token from Twitch.');
             return Command::FAILURE;
         }
 
@@ -54,7 +57,8 @@ class RefreshTopStreamsCommand extends Command
 
         $this->saveProcessedStreams($processed_streams);
 
-        $this->info('Done. Top Streams have been refreshed.');
+        $duration = $start->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE);
+        $this->info(PHP_EOL . 'Done. Top Streams have been refreshed. Time: ' . $duration);
 
         return Command::SUCCESS;
     }

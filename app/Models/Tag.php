@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Services\TwitchApiService;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class Tag extends Model
 {
@@ -45,23 +47,26 @@ class Tag extends Model
 
     public static function fetchAndSaveTagsFromTwitch(array $tags, TwitchApiService $twitch): void
     {
-        $tags = $twitch->getTags($tags);
+        try {
+            $tags = $twitch->getTags($tags);
 
-        if (is_null($tags)) {
-            Log::error('Fetch stream tags failed.');
-            return;
+            if (is_null($tags)) {
+                throw new Exception('Could not fetch tag details from Twitch.');
+            }
+
+            $locale = 'en-us';
+
+            $tags->each(function ($tag) use ($locale) {
+                static::updateOrCreate([
+                    'twitch_id' => $tag->tag_id,
+                ], [
+                    'is_auto' => $tag->is_auto,
+                    'name' => $tag->localization_names->$locale,
+                    'description' => $tag->localization_descriptions->$locale,
+                ]);
+            });
+        } catch (Throwable $e) {
+            Log::error('Fetch stream tags failed: ' . $e->getMessage());
         }
-
-        $locale = 'en-us';
-
-        $tags->each(function ($tag) use ($locale) {
-            static::updateOrCreate([
-                'twitch_id' => $tag->tag_id,
-            ], [
-                'is_auto' => $tag->is_auto,
-                'name' => $tag->localization_names->$locale,
-                'description' => $tag->localization_descriptions->$locale,
-            ]);
-        });
     }
 }

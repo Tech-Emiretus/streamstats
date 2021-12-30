@@ -15,7 +15,7 @@ class CreateTopStreamsTable extends Migration
     {
         Schema::create('top_streams', function (Blueprint $table) {
             $table->id();
-            $table->string('twitch_id')->unique();
+            $table->string('twitch_id');
             $table->foreignId('broadcaster_id')->constrained('users');
             $table->foreignId('game_id')->constrained('games');
             $table->string('title');
