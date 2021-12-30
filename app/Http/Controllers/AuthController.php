@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Services\TwitchApiService;
 use App\Services\TwitchAuthService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
@@ -55,6 +54,6 @@ class AuthController extends Controller
 
     protected static function saveAccessToken(string $access_token): void
     {
-        Session::put('access_token', $access_token);
+        Session::put('twitch_access_token', $access_token);
     }
 }

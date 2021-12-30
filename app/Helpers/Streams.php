@@ -11,7 +11,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
-class StreamsHelper
+class Streams
 {
     /**
      * Fetches live streams from twitch with retry mechanism.
@@ -20,22 +20,24 @@ class StreamsHelper
      * @static
      * @param TwitchApiService $twitch
      * @param null|int $take
+     * @param null|string $user_id
      * @return Collection
      * @throws InvalidArgumentException
      * @throws Exception
      */
-    public static function fetchStreams(TwitchApiService $twitch, ?int $take = null): Collection
+    public static function fetch(TwitchApiService $twitch, ?int $take = null, ?string $user_id = null): Collection
     {
         $fetched_streams = collect([]);
         $next_page_cursor = null;
         $done = false;
+        $method = static::getFetchStreamsMethod($user_id);
 
         while (!$done) {
             $retries = 3;
             $streams = null;
 
             while ($retries > 0) {
-                $streams = $twitch->getStreams(100, $next_page_cursor);
+                $streams = $twitch->$method(...static::getFetchStreamsArgs($next_page_cursor, $user_id));
 
                 if (!is_null($streams)) {
                     break;
@@ -55,11 +57,12 @@ class StreamsHelper
                 }
             });
 
-            if ($streams->pagination) {
+            if ($streams->pagination && property_exists($streams->pagination, 'cursor')) {
                 $next_page_cursor = $streams->pagination->cursor;
             }
 
-            $done = !is_null($take) && $fetched_streams->count() >= $take;
+            // Null cursor means there is no more data to be fetched.
+            $done = is_null($next_page_cursor) || (!is_null($take) && $fetched_streams->count() >= $take);
         }
 
         return is_null($take) ? $fetched_streams : $fetched_streams->take($take);
@@ -93,5 +96,21 @@ class StreamsHelper
         });
 
         return $processed_streams;
+    }
+
+    public static function getFetchStreamsMethod(?string $user_id): string
+    {
+        return is_null($user_id) ? 'getStreams' : 'getFollowedStreams';
+    }
+
+    public static function getFetchStreamsArgs(?string $next_page_cursor = null, ?string $user_id = null): array
+    {
+        $args = [100, $next_page_cursor];
+
+        if (!is_null($user_id)) {
+            array_unshift($args, $user_id);
+        }
+
+        return $args;
     }
 }

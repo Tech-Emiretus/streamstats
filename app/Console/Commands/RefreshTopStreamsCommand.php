@@ -2,23 +2,18 @@
 
 namespace App\Console\Commands;
 
-use App\Helpers\StreamsHelper;
-use App\Models\Game;
-use App\Models\Tag;
+use App\Helpers\Streams;
 use App\Models\TopStream;
-use App\Models\User;
 use App\Services\TwitchApiService;
 use App\Services\TwitchAuthService;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
-use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
-use InvalidArgumentException;
 
 class RefreshTopStreamsCommand extends Command
 {
@@ -56,12 +51,12 @@ class RefreshTopStreamsCommand extends Command
 
         // Fetch Streams
         $this->comment(PHP_EOL . 'Start fetching streams.');
-        $streams = StreamsHelper::fetchStreams($twitch, 1000);
+        $streams = Streams::fetch($twitch, 1000);
         $this->info('Done fetching ' . $streams->count() . ' streams.');
 
         // Process Streams
         $this->comment(PHP_EOL . 'Start processing streams.');
-        $processed_streams = StreamsHelper::getProcessedStreams($twitch, $streams);
+        $processed_streams = Streams::getProcessedStreams($twitch, $streams);
         $this->info('Done processing streams.');
 
         // Save Streams

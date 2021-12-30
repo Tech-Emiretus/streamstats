@@ -79,7 +79,7 @@ class TwitchApiService
         $response = $this->fetch('get', static::ENDPOINT . '/users');
 
         if ($response->successful() === false) {
-            Log::error('Get user failed: ' . $response->body(), 'twitch');
+            Log::error('Get user failed: ' . $response->body());
             return null;
         }
 
@@ -108,7 +108,36 @@ class TwitchApiService
         $response = $this->fetch('get', static::ENDPOINT . '/streams', $params);
 
         if ($response->successful() === false) {
-            Log::error('Get streams failed: ' . $response->body(), 'twitch');
+            Log::error('Get streams failed: ' . $response->body());
+            return null;
+        }
+
+        return json_decode($response->body());
+    }
+
+    /**
+     * Get the followed streams from twitch sorted by descending order of viewer count.
+     *
+     * @param string $twitch_user_id
+     * @param int $per_page
+     * @param null|string $after
+     * @return null|stdClass
+     */
+    public function getFollowedStreams(string $twitch_user_id, int $per_page = 20, ?string $after = null): ?stdClass
+    {
+        $params = [
+            'user_id' => $twitch_user_id,
+            'first' => static::getPerPage($per_page),
+        ];
+
+        if (!empty($after)) {
+            $params['after'] = $after;
+        }
+
+        $response = $this->fetch('get', static::ENDPOINT . '/streams/followed', $params);
+
+        if ($response->successful() === false) {
+            Log::error('Get followed streams failed: ' . $response->body());
             return null;
         }
 
@@ -137,7 +166,7 @@ class TwitchApiService
         $response = $this->fetch('get', static::ENDPOINT . '/tags/streams', $params);
 
         if ($response->successful() === false) {
-            Log::error('Get tags failed: ' . $response->body(), 'twitch');
+            Log::error('Get tags failed: ' . $response->body());
             return null;
         }
 

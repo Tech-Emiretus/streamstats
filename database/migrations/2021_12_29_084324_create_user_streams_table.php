@@ -15,7 +15,7 @@ class CreateUserStreamsTable extends Migration
     {
         Schema::create('user_streams', function (Blueprint $table) {
             $table->id();
-            $table->string('twitch_id')->unique();
+            $table->string('twitch_id');
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('broadcaster_id')->constrained('users');
             $table->foreignId('game_id')->constrained('games');
