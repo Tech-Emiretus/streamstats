@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class User extends Authenticatable
@@ -49,7 +50,16 @@ class User extends Authenticatable
 
     public function refreshStreams(Collection $streams): void
     {
-        $this->streams()->delete();
-        $this->streams()->createMany($streams->toArray());
+        $this->streams()
+            ->get()
+            ->each(function ($stream) {
+                $stream->tags()->detach();
+                $stream->delete();
+            });
+
+        $streams->each(function ($stream) {
+            $user_stream = $this->streams()->create(Arr::except($stream, 'tags'));
+            $user_stream->tags()->sync($stream['tags']);
+        });
     }
 }

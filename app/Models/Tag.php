@@ -6,6 +6,7 @@ use App\Services\TwitchApiService;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -21,6 +22,16 @@ class Tag extends Model
     protected $guarded = [
         'id'
     ];
+
+    public function userStreams(): MorphToMany
+    {
+        return $this->morphedByMany(UserStream::class, 'taggable');
+    }
+
+    public function topStreams(): MorphToMany
+    {
+        return $this->morphedByMany(TopStream::class, 'taggable');
+    }
 
     public static function getTagsFromStream($stream, TwitchApiService $twitch): array
     {

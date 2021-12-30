@@ -32,7 +32,10 @@ Route::middleware('auth')->group(function () {
     // Stream stats
     Route::get('streams/top-streams', [StreamStatsController::class, 'getTopStreams']);
     Route::get('streams/followed-by-user', [StreamStatsController::class, 'getStreamsFollowedByUser']);
-    Route::get('streams/get-min-viewer-count-needed', [StreamStatsController::class, 'getViewerCountNeededForLowest']);
+    Route::get('streams/median-view-count', [StreamStatsController::class, 'getMedianViewCount']);
+    Route::get('streams/count-by-hour', [StreamStatsController::class, 'getStreamCountByHour']);
+    Route::get('streams/min-viewer-count-needed', [StreamStatsController::class, 'getViewerCountNeededForLowest']);
+    Route::get('streams/shared-tags', [StreamStatsController::class, 'getSharedTags']);
 });
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
