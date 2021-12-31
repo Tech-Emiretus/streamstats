@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Responder;
 use App\Models\User;
 use App\Services\TwitchApiService;
 use App\Services\TwitchAuthService;
@@ -25,7 +26,7 @@ class AuthController extends Controller
     public function authenticate(Request $request, TwitchAuthService $auth_service)
     {
         // todo: move to form request
-        if (!$request->input('code') || $request->input('state') !== Session::get('twitch_state')) {
+        if (!$request->input('code') || !$request->input('state') || $request->input('state') !== Session::get('twitch_state')) {
             return redirect('/login')->withErrors('Something unexpected happened.');
         }
 
@@ -56,7 +57,7 @@ class AuthController extends Controller
 
     public function getUser()
     {
-        return Auth::user();
+        return Responder::success(Auth::user());
     }
 
     public function logout()

@@ -6,7 +6,8 @@ export const user = ref({});
 
 export const getUserDetails = async () => {
     try {
-        user.value = await userService.getDetails();
+        const response = await userService.getDetails();
+        user.value = response.data;
     } catch (err) {
         Swal.fire({
             title: 'Error',
