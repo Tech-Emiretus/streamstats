@@ -57,7 +57,7 @@ class Streams
                 }
             });
 
-            if ($streams->pagination && property_exists($streams->pagination, 'cursor')) {
+            if (property_exists($streams, 'pagination') && property_exists($streams->pagination, 'cursor')) {
                 $next_page_cursor = $streams->pagination->cursor;
             }
 
