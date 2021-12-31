@@ -3,9 +3,8 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
-class UserFactory extends Factory
+class GameFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -16,9 +15,7 @@ class UserFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'username' => Str::slug($this->faker->name(), '_'),
             'twitch_id' => $this->faker->numberBetween(100000),
-            'email' => $this->faker->unique()->safeEmail(),
         ];
     }
 }
