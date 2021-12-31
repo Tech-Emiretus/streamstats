@@ -98,7 +98,7 @@ class Streams
         return $processed_streams;
     }
 
-    public static function getFetchStreamsMethod(?string $user_id): string
+    public static function getFetchStreamsMethod(?string $user_id = null): string
     {
         return is_null($user_id) ? 'getStreams' : 'getFollowedStreams';
     }
