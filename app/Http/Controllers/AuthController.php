@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Services\TwitchApiService;
 use App\Services\TwitchAuthService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -46,6 +47,7 @@ class AuthController extends Controller
 
         $user = User::firstOrCreateFromTwitch($twitch_user);
         Auth::login($user);
+        $user->update(['last_login_at' => Carbon::now()]);
 
         static::saveAccessToken($access_token);
 

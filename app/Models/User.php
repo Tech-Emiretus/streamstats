@@ -21,6 +21,10 @@ class User extends Authenticatable
         'id'
     ];
 
+    protected $dates = [
+        'last_login_at'
+    ];
+
     public function streams(): HasMany
     {
         return $this->hasMany(UserStream::class);

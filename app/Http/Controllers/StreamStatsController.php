@@ -53,6 +53,11 @@ class StreamStatsController extends Controller
     public function getMedianViewCount(Request $request): JsonResponse
     {
         $total_streams = TopStream::count();
+
+        if ($total_streams === 0) {
+            return Responder::success(0, 'No data available.');
+        }
+
         $is_even = $total_streams % 2 === 0;
         $offset = (int) floor($total_streams / 2);
         $offset = $is_even ? $offset - 1 : $offset;

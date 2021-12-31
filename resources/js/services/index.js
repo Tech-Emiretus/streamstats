@@ -26,6 +26,12 @@ axios.interceptors.response.use(
     },
     (error) => {
         isFetching.value = false;
+
+        if (error?.response?.status === 401) {
+            window.location.href = '/login';
+            return;
+        }
+
         return Promise.reject(error);
     }
 );
