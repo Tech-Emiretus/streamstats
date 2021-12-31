@@ -14,7 +14,7 @@ class GameFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
+            'name' => $this->faker->words(asText: true),
             'twitch_id' => $this->faker->numberBetween(100000),
         ];
     }
