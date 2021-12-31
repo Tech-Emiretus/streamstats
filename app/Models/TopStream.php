@@ -25,6 +25,11 @@ class TopStream extends Model
         return $this->belongsTo(Game::class);
     }
 
+    public function broadcaster(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'broadcaster_id');
+    }
+
     /**
      * Relation - Tags for a user stream.
      *

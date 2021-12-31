@@ -19,10 +19,13 @@ class StreamStatsController extends Controller
         $sort_order = $request->input('sort_order', 'desc');
         $limit = $request->input('top', 100);
 
-        $streams = TopStream::with('game')
-            ->orderBy($sort_field, $sort_order)
+        $streams = TopStream::with('game:id,name', 'broadcaster:id,name')
+            ->orderBy('viewer_count', 'desc')
             ->limit($limit)
-            ->get();
+            ->get()
+            ->sortBy($sort_field, SORT_REGULAR, strtolower($sort_order) === 'desc')
+            ->values()
+            ->all();
 
         return Responder::success($streams);
     }
@@ -74,7 +77,7 @@ class StreamStatsController extends Controller
         $per_page = $request->input('per_page', 20);
 
         $streams = TopStream::query()
-            ->select(DB::raw("DATE_FORMAT(started_at, '%Y-%m-%d %H:00:00') as stream_hour, count(id) as stream_count"))
+            ->select(DB::raw("DATE_FORMAT(started_at, '%Y-%m-%d %H:00:00') as stream_hour, count(id) as streams_count"))
             ->groupBy('stream_hour')
             ->orderBy($sort_field, $sort_order)
             ->paginate($per_page);

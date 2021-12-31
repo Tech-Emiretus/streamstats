@@ -1,6 +1,6 @@
 <template>
-    <div class="bg-white shadow rounded-lg p-8 w-100% ml-5 mb-10">
-        <h2 class="text-2xl text-center font-normal mb-6 text-90">Games By Stream Count</h2>
+    <div class="bg-white shadow rounded-lg p-8 w-100% mr-5 mb-10">
+        <h2 class="text-2xl text-center font-normal mb-6 text-90">Games By Viewer Count</h2>
 
         <svg class="block mx-auto mb-6" xmlns="http://www.w3.org/2000/svg" width="100" height="2" viewBox="0 0 100 2">
             <path fill="#D8E3EC" d="M0 0h100v2H0z"></path>
@@ -10,8 +10,8 @@
             <tool-bar
                 :sortFields="sortFields"
                 :showPerPage="true"
-                defaultSortField="name"
-                defaultSortOrder="ASC"
+                defaultSortField="viewer_count"
+                defaultSortOrder="DESC"
                 :defaultPerPage="20"
                 @filtersChanged="data => Object.assign(filters, data)"
                 ></tool-bar>
@@ -21,7 +21,7 @@
                     <tr>
                         <table-header>Twitch ID</table-header>
                         <table-header>Name</table-header>
-                        <table-header>No. of Streams</table-header>
+                        <table-header>No. of Views</table-header>
                     </tr>
                 </thead>
 
@@ -29,7 +29,7 @@
                     <tr v-for="game in games" class="whitespace-nowrap" :key="game.id">
                         <table-data>{{ game.twitch_id || 'N/A' }}</table-data>
                         <table-data>{{ game.name || 'N/A' }}</table-data>
-                        <table-data>{{ game.streams_count }}</table-data>
+                        <table-data>{{ game.viewer_count }}</table-data>
                     </tr>
                 </tbody>
             </app-table>
@@ -52,17 +52,17 @@
     import gamesService from "../services/games";
 
     export default {
-        name: 'GamesByStreamCount',
+        name: 'GamesByViewerCount',
 
         setup() {
             const sortFields = ref([
                 {field: 'name', name: 'Name'},
-                {field: 'streams_count', name: 'No. of Streams'}
+                {field: 'viewer_count', name: 'No. of Views'}
             ]);
 
             const filters = reactive({
-                sort_field: 'name',
-                sort_order: 'ASC',
+                sort_field: 'viewer_count',
+                sort_order: 'DESC',
                 per_page: 20
             });
 
@@ -75,12 +75,12 @@
 
             const getGames = async () => {
                 try {
-                    const response = await gamesService.getByStreamCount({ ...filters, ...page });
+                    const response = await gamesService.getByViewerCount({ ...filters, ...page });
 
                     games.value = response.data.data;
                     Object.assign(pageDetails, pickBy(response.data, (v, key) => key !== 'data'));
                 } catch (err) {
-                    console.log(`Fetch Games By Stream Count Error: ${err}`);
+                    console.log(`Fetch Games By Viewer Count Error: ${err}`);
                 }
             };
 
