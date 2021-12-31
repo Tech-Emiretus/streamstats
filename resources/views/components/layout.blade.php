@@ -11,5 +11,7 @@
 
     <body class="bg-slate-100 text-black h-full">
         {{ $slot }}
+
+        <script src="{{ asset('js/app.js') }}"></script>
     </body>
 </html>

@@ -52,6 +52,19 @@ class AuthController extends Controller
         return redirect('/');
     }
 
+    public function getUser()
+    {
+        return Auth::user();
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        Session::remove('twitch_access_token');
+
+        return redirect('/login');
+    }
+
     protected static function saveAccessToken(string $access_token): void
     {
         Session::put('twitch_access_token', $access_token);

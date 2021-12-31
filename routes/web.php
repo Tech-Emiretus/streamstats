@@ -22,6 +22,7 @@ Route::middleware('auth')->group(function () {
         return view('welcome');
     });
 
+    Route::get('/user', [AuthController::class, 'getUser']);
     Route::get('/logout', [AuthController::class, 'logout']);
     Route::get('/refresh-streams', [UserStreamsController::class, 'refreshStreams']);
 
