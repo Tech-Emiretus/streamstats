@@ -1,5 +1,5 @@
 <template>
-    <nav class="flex items-center justify-between flex-wrap bg-purple-900 py-3 px-6">
+    <nav class="flex items-center justify-between flex-wrap bg-purple-900 py-3 px-6 mb-10">
         <div class="flex items-center flex-shrink-0 text-white mr-6">
             <img class="w-12 h-12 mr-2" :src="user.profile_image" />
             <span class="font-semibold text-xl tracking-tight"
@@ -56,7 +56,7 @@
                         lg:mt-0
                     "
                     @click.prevent="refreshStreams"
-                    >Refresh Streams</a
+                    >Refresh Your Streams</a
                 >
 
                 <a

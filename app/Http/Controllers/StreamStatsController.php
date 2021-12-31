@@ -87,7 +87,7 @@ class StreamStatsController extends Controller
         $user_lowest_stream = Auth::user()->streams()->min('viewer_count');
 
         if (is_null($user_lowest_stream)) {
-            return Responder::success([], 'User has no streams.');
+            return Responder::success(null, 'User has no streams.');
         }
 
         $lowest_top_stream = TopStream::min('viewer_count');

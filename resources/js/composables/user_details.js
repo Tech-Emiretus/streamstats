@@ -13,6 +13,8 @@ export const getUserDetails = async () => {
             icon: 'error',
             text: 'Could not fetch user details. Logging out.',
             allowOutsideClick: false
-        }).then(() => window.location.href = '/logout');
+        }).then(() => {
+            window.location.href = '/logout';
+        });
     }
 }
