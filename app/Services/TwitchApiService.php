@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Exception;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;

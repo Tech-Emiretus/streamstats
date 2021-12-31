@@ -37,7 +37,7 @@ class UserStreamsControllerTest extends TestCase
     public function it_will_return_an_error_when_fetching_from_twitch_faisl()
     {
         Http::fake([
-            TwitchApiService::ENDPOINT . '/streams' => Http::response([], 400)
+            TwitchApiService::ENDPOINT . '/streams?*' => Http::response([], 400)
         ]);
 
         $this->withSession(['twitch_access_token' => '111111'])

@@ -10,11 +10,7 @@ use App\Services\TwitchApiService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 use Mockery;
-use stdClass;
 use Tests\TestCase;
 
 class StreamsTest extends TestCase

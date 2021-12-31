@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Controllers;
 
-use App\Models\Game;
 use App\Models\Tag;
 use App\Models\TopStream;
 use App\Models\User;
