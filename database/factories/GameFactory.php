@@ -15,7 +15,7 @@ class GameFactory extends Factory
     {
         return [
             'name' => $this->faker->words(asText: true),
-            'twitch_id' => $this->faker->numberBetween(100000),
+            'twitch_id' => $this->faker->unique()->numberBetween(100000),
         ];
     }
 }

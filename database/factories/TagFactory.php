@@ -15,7 +15,7 @@ class TagFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
-            'twitch_id' => $this->faker->numberBetween(100000),
+            'twitch_id' => $this->faker->unique()->numberBetween(100000),
         ];
     }
 }

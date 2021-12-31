@@ -17,7 +17,7 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'username' => Str::slug($this->faker->name(), '_'),
-            'twitch_id' => $this->faker->numberBetween(100000),
+            'twitch_id' => $this->faker->unique()->numberBetween(100000),
             'email' => $this->faker->unique()->safeEmail(),
         ];
     }

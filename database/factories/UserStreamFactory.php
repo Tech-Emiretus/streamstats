@@ -7,7 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class TopStreamFactory extends Factory
+class UserStreamFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class TopStreamFactory extends Factory
     public function definition()
     {
         return [
-            'twitch_id' => $this->faker->numberBetween(100000),
+            'twitch_id' => $this->faker->unique()->numberBetween(100000),
             'title' => $this->faker->words(5, true),
             'game_id' => Game::factory(),
             'broadcaster_id' => User::factory(),
