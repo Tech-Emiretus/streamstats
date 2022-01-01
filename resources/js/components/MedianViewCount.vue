@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white shadow rounded-lg p-8 max-w-md mx-auto mb-10">
+    <div class="bg-white shadow rounded-lg p-8 max-w-md md:mx-auto mb-10 mx-5">
         <h2 class="text-2xl text-center font-normal mb-6 text-90">Median View Count</h2>
 
         <svg class="block mx-auto mb-6" xmlns="http://www.w3.org/2000/svg" width="100" height="2" viewBox="0 0 100 2">
