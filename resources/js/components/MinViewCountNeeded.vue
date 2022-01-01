@@ -8,7 +8,7 @@
 
         <div class="flex justify-center">
             <p class="text-purple-700 text-2xl">
-                <span v-if="minViewCount === null">No streams available. Refresh streams.</span>
+                <span v-if="minViewCount === null">No data available.</span>
                 <span v-else-if="minViewCount === 0">All user streams are top streams.</span>
                 <span v-else>{{ minViewCount }}</span>
             </p>
