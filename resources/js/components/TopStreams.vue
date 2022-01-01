@@ -6,7 +6,7 @@
             <path fill="#D8E3EC" d="M0 0h100v2H0z"></path>
         </svg>
 
-        <template v-if="streams.length">
+        <template v-if="streams && streams.length">
             <tool-bar
                 :sortFields="sortFields"
                 :showPerPage="false"
@@ -41,7 +41,7 @@
         </template>
 
         <template v-else>
-            <p>No data available.</p>
+            <p class="text-center">No data available.</p>
         </template>
     </div>
 </template>
