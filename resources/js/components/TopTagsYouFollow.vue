@@ -29,7 +29,7 @@
                     <tr v-for="tag in tags" class="whitespace-nowrap" :key="tag.id">
                         <table-data>{{ tag.name }}</table-data>
                         <table-data>{{ tag.description }}</table-data>
-                        <table-data>{{ tag.is_auto }}</table-data>
+                        <table-data>{{ tag.is_auto == 1 ? 'Yes' : 'No' }}</table-data>
                     </tr>
                 </tbody>
             </app-table>
