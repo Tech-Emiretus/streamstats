@@ -6,7 +6,7 @@ import easySpinner from 'vue-easy-spinner';
 import Table from './components/Table.vue';
 import TableHeader from './components/TableHeader.vue';
 import TableData from './components/TableData.vue';
-import ToolBar from './components/Toolbar.vue';
+import ToolBar from './components/ToolBar.vue';
 import Pagination from './components/Pagination.vue';
 
 createApp(App)
