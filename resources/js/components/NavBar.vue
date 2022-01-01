@@ -55,7 +55,7 @@
                         mt-4
                         lg:mt-0
                     "
-                    @click.prevent="refreshStreams"
+                    @click.prevent="refreshStreams(true)"
                     >Refresh Your Streams</a
                 >
 
