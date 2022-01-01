@@ -2,7 +2,8 @@
 	<div class="pagination my-5">
 		<div class="flex items-center justify-center space-x-1">
             <a
-                class="flex items-center px-4 py-2 text-gray-500 bg-gray-300 rounded-md cursor-pointer"
+                class="flex items-center px-4 py-2 text-gray-500 bg-gray-300  rounded-md hover:bg-blue-400 hover:text-white"
+                :class="{ 'cursor-not-allowed': current_page == 1, 'cursor-pointer': current_page != 1 }"
                 @click.prevent="navigate(prevPage, $event)"
                 :disabled="current_page == 1">
                     <span aria-hidden="true">Previous</span>
@@ -25,7 +26,8 @@
             </template>
 
             <a
-                class="px-4 py-2 font-bold text-gray-500 bg-gray-300 rounded-md hover:bg-blue-400 hover:text-white cursor-pointer"
+                class="px-4 py-2 font-bold text-gray-500 bg-gray-300 rounded-md hover:bg-blue-400 hover:text-white"
+                :class="{ 'cursor-not-allowed': current_page == last_page, 'cursor-pointer': current_page != last_page }"
                 @click="navigate(nextPage, $event)"
                 :disabled="current_page == last_page">
                     <span aria-hidden="true">Next</span>
